@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shabdaanjali - Policy Consultation Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --primary-dark: #0d47a1;
+            --secondary: #34a853;
+            --danger: #ea4335;
+            --warning: #fbbc04;
+            --light: #f8f9fa;
+            --dark: #202124;
+            --gray: #5f6368;
+            --light-gray: #dadce0;
+            --sidebar-width: 250px;
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f7f9;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--dark);
+            color: white;
+            padding: 20px 0;
+            transition: var(--transition);
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+        
+        .logo {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .logo h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo span {
+            color: var(--primary);
+        }
+        
+        .menu-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .menu-item:hover, .menu-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid var(--primary);
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            margin-left: var(--sidebar-width);
+            transition: var(--transition);
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .header h2 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .language-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid var(--light-gray);
+            cursor: pointer;
+        }
+        
+        .consultation-info {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Dashboard Cards */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-card {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .stat-card .label {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        .stat-card .trend {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .trend.up {
+            color: var(--secondary);
+        }
+        
+        .trend.down {
+            color: var(--danger);
+        }
+        
+        /* Charts */
+        .chart-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .chart-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .chart-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: var(--transition);
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--light-gray);
+            color: var(--gray);
+        }
+        
+        .btn-outline:hover {
+            background: var(--light);
+        }
+        
+        /* AI Analysis Section */
+        .ai-analysis {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .ai-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .ai-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .ai-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .ai-summary, .ai-recommendations {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        
+        .ai-summary h4, .ai-recommendations h4 {
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        /* Comment List */
+        .comments-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .filter-label {
+            font-size: 12px;
+            color: var(--gray);
+        }
+        
+        select, input {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid var(--light-gray);
+            background: white;
+        }
+        
+        .comment {
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: var(--light);
+            transition: var(--transition);
+        }
+        
+        .comment:hover {
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .comment-source {
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .key-stakeholder {
+            background: var(--primary);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        
+        .comment-sentiment {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .sentiment-negative {
+            background: #ffebee;
+            color: var(--danger);
+        }
+        
+        .sentiment-positive {
+            background: #e6f4ea;
+            color: var(--secondary);
+        }
+        
+        .sentiment-neutral {
+            background: #fef7e0;
+            color: var(--warning);
+        }
+        
+        .comment-clause {
+            font-size: 14px;
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+        
+        .comment-text {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        .comment-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+        
+        .comment-type {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .type-badge {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .type-actionable {
+            background: #e6f4ea;
+            color: var(--secondary);
+        }
+        
+        .type-complaint {
+            background: #ffebee;
+            color: var(--danger);
+        }
+        
+        .campaign-badge {
+            background: #e8f0fe;
+            color: var(--primary);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .comment-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--gray);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            transition: var(--transition);
+        }
+        
+        .action-btn:hover {
+            color: var(--primary);
+        }
+        
+        /* Translation UI */
+        .translation-ui {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+        
+        .translation-btn {
+            padding: 4px 8px;
+            background: #e8f0fe;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray);
+        }
+        
+        /* Analysis tags */
+        .analysis-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+        }
+        
+        .analysis-tag {
+            padding: 5px 10px;
+            background: #e8f0fe;
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--primary);
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .dashboard-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .ai-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                width: 70px;
+                transform: translateX(-70px);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .logo h1 span, .menu-item span {
+                display: none;
+            }
+            
+            .menu-item {
+                justify-content: center;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+        
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 101;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 8px;
+        }
+        
+        .page-btn {
+            padding: 8px 12px;
+            background: white;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .page-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        /* Slider container */
+        .photo-slider {
+            height: 8%;
+            width: 100%;
+            margin: 20px auto;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* Slides wrapper */
+        .slides {
+            display: flex;
+            width: 300%;   /* 3 images */
+            animation: slide 9s infinite;
+        }
+
+        /* Each image takes full width */
+            .slides img {
+        width: 100%;       /* take full width of container */
+        height: auto;      /* adjust height automatically */
+        flex-shrink: 0;
+        object-fit: cover;  /* keeps full image visible */
+        border-radius: 12px;
+    }
+
+        /* Keyframes for sliding */
+        @keyframes slide {
+            0%   { transform: translateX(0); }
+            33%  { transform: translateX(0); }
+            38%  { transform: translateX(-100%); }
+            71%  { transform: translateX(-100%); }
+            76%  { transform: translateX(-200%); }
+            100% { transform: translateX(-200%); }
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="logo">
+                <h1><i class="fas fa-brain"></i> <span>Shabdaanjali</span></h1>
+            </div>
+            <div class="menu-item active">
+                <i class="fas fa-home"></i>
+                <a href="index.html" style="color:white; text-decoration:none;">Dashboard</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-comments"></i>
+                <a href="consultation.html" style="color:white; text-decoration:none;">Consultations</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-chart-bar"></i>
+                <span>Analytics</span>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-users"></i>
+                <span>Stakeholders</span>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-question-circle"></i>
+                <span>Help & Support</span>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h2>E-Consultation Analysis Dashboard</h2>
+                <div class="header-actions">
+                    <div class="language-selector" id="languageSelector">
+                        <i class="fas fa-globe"></i>
+                        <span>English</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="user-info">
+                        <img src="https://ui-avatars.com/api/?name=MoCA+Officer&background=0D8ABC&color=fff" alt="User" style="width: 40px; height: 40px; border-radius: 50%;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="photo-slider">
+                <div class="slides">
+                    <img src="img1" alt="Slide 1">
+                    <img src="img2" alt="Slide 2">
+                    <img src="img3" alt="Slide 3">
+                </div>
+            </div>
+            
+            <div class="consultation-info">
+                <h3>Companies (Amendment) Bill, 2023</h3>
+                <p>Analysis of 2,347 public comments received between Jan 15 - Feb 28, 2023</p>
+            </div>
+            
+            <div class="dashboard-cards">
+                <div class="card stat-card">
+                    <div class="label">TOTAL COMMENTS</div>
+                    <div class="value">2,347</div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>12% from previous consultation</span>
+                    </div>
+                </div>
+                
+                <div class="card stat-card">
+                    <div class="label">KEY STAKEHOLDERS</div>
+                    <div class="value">38</div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>8% more engaged</span>
+                    </div>
+                </div>
+                
+                <div class="card stat-card">
+                    <div class="label">ACTIONABLE SUGGESTIONS</div>
+                    <div class="value">217</div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>24% higher quality</span>
+                    </div>
+                </div>
+                
+                <div class="card stat-card">
+                    <div class="label">COORDINATED CAMPAIGNS</div>
+                    <div class="value">14</div>
+                    <div class="trend down">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>3% less than last time</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="ai-analysis">
+                <div class="ai-header">
+                    <div class="ai-title">AI Analysis Summary</div>
+                    <div class="chart-actions">
+                        <button class="btn btn-primary" id="generateAnalysisBtn">
+                            <i class="fas fa-robot"></i> Generate AI Analysis
+                        </button>
+                    </div>
+                </div>
+                <div class="ai-content">
+                    <div class="ai-summary">
+                        <h4>Overall Sentiment Summary</h4>
+                        <p id="aiSummaryText">The overall sentiment towards the Companies (Amendment) Bill, 2023 is moderately positive. While stakeholders appreciate the increased transparency measures, concerns remain about compliance burdens for smaller organizations.</p>
+                    </div>
+                    <div class="ai-recommendations">
+                        <h4>AI Recommendations</h4>
+                        <p id="aiRecommendationsText">Consider implementing tiered compliance requirements based on company size. The clauses related to audit requirements and reporting timelines need refinement to address small business concerns.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-header">
+                    <div class="chart-title">Sentiment Analysis by Clause</div>
+                    <div class="chart-actions">
+                        <button class="btn btn-outline" id="exportBtn">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                        <button class="btn btn-primary" id="filterStakeholdersBtn">
+                            <i class="fas fa-filter"></i> Filter Key Stakeholders
+                        </button>
+                    </div>
+                </div>
+
+                 <!-- Side by side layout -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div style="height: 300px; position: relative;">
+                        <canvas id="lineChart"></canvas>
+                    </div>
+                    <div style="height: 300px; position: relative;">
+                        <canvas id="sentimentChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="comments-section">
+                <div class="chart-header">
+                    <div class="chart-title">Comment Analysis</div>
+                    <div class="chart-actions">
+                        <button class="btn btn-primary" id="showActionableBtn">
+                            <i class="fas fa-lightbulb"></i> Show Actionable Suggestions
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="filters">
+                    <div class="filter-group">
+                        <div class="filter-label">SENTIMENT</div>
+                        <select id="sentimentFilter">
+                            <option value="all">All Sentiments</option>
+                            <option value="positive">Positive</option>
+                            <option value="negative">Negative</option>
+                            <option value="neutral">Neutral</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <div class="filter-label">STAKEHOLDER TYPE</div>
+                        <select id="stakeholderFilter">
+                            <option value="all">All Stakeholders</option>
+                            <option value="key">Key Stakeholders</option>
+                            <option value="industry">Industry Bodies</option>
+                            <option value="individual">Individual Citizens</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <div class="filter-label">CLAUSE</div>
+                        <select id="clauseFilter">
+                            <option value="all">All Clauses</option>
+                            <option value="clause7">Clause 7 - CSR Provisions</option>
+                            <option value="rule12">Rule 12 - Audit Requirements</option>
+                            <option value="section4">Section 4(1)(a) - Reporting Timeline</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <div class="filter-label">COMMENT TYPE</div>
+                        <select id="typeFilter">
+                            <option value="all">All Types</option>
+                            <option value="actionable">Actionable Suggestions</option>
+                            <option value="complaint">Complaints</option>
+                            <option value="query">Queries</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <div class="filter-label">SEARCH</div>
+                        <input type="text" id="searchInput" placeholder="Search comments...">
+                    </div>
+                </div>
+                
+                <div class="comments-list" id="commentsList">
+                    <!-- Comments will be dynamically inserted here -->
+                </div>
+                
+                <div class="pagination" id="pagination">
+                    <!-- Pagination will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Language Selection Dropdown -->
+    <div class="modal" id="languageModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Select Language</h3>
+                <button class="close-modal" data-modal="languageModal">&times;</button>
+            </div>
+            <div style="display: grid; gap: 10px;">
+                <button class="btn btn-outline language-option" data-lang="en">
+                    <i class="fas fa-language"></i> English
+                </button>
+                <button class="btn btn-outline language-option" data-lang="hi">
+                    <i class="fas fa-language"></i> Hindi
+                </button>
+                <button class="btn btn-outline language-option" data-lang="mr">
+                    <i class="fas fa-language"></i> Marathi
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for comment analysis -->
+    <div class="modal" id="analysisModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Comment Analysis</h3>
+                <button class="close-modal" data-modal="analysisModal">&times;</button>
+            </div>
+            <div id="modalContent">
+                <!-- Modal content will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+<script>
+    // Sample data for the application
+    const sampleComments = [
+        {
+            id: 1,
+            source: "Institute of Chartered Accountants of India (ICAI)",
+            isKeyStakeholder: true,
+            sentiment: "negative",
+            clause: "Clause 7: Corporate Social Responsibility (CSR) Reporting Requirements",
+            text: "While the intention to enhance transparency in CSR spending is commendable, the proposed amendment may create unintended compliance burdens for smaller companies. We urge reconsideration of the mandatory disclosure requirements for companies with less than ₹50 crore net profit.",
+            type: "actionable",
+            campaign: false,
+            date: "2023-02-15",
+            analysis: {
+                sentimentScore: -0.8,
+                keyPhrases: ["compliance burdens", "smaller companies", "mandatory disclosure requirements"],
+                suggestedAction: "Consider threshold-based application of disclosure requirements",
+                impact: "High",
+                relevance: "Very Relevant"
+            }
+        },
+        {
+            id: 2,
+            source: "Federation of Indian Chambers of Commerce & Industry (FICCI)",
+            isKeyStakeholder: true,
+            sentiment: "negative",
+            clause: "Rule 12: Enhanced Audit Requirements",
+            text: "The proposed audit requirements would significantly increase compliance costs without corresponding benefits to stakeholders. We recommend a phased implementation approach and raising the threshold for application to companies with turnover below ₹500 crore.",
+            type: "actionable",
+            campaign: true,
+            similarCount: 127,
+            date: "2023-02-18",
+            analysis: {
+                sentimentScore: -0.7,
+                keyPhrases: ["compliance costs", "phased implementation", "threshold for application"],
+                suggestedAction: "Consider phased implementation and review applicability thresholds",
+                impact: "High",
+                relevance: "Very Relevant"
+            }
+        },
+        {
+            id: 3,
+            source: "Rajesh Kumar",
+            isKeyStakeholder: false,
+            sentiment: "positive",
+            clause: "General: Overall Legislation",
+            text: "This is a great step towards corporate transparency. I fully support the government's initiative to make companies more accountable to stakeholders and the public.",
+            type: "praise",
+            campaign: false,
+            date: "2023-01-20",
+            analysis: {
+                sentimentScore: 0.9,
+                keyPhrases: ["corporate transparency", "accountable to stakeholders"],
+                suggestedAction: "None - general support comment",
+                impact: "Low",
+                relevance: "General"
+            }
+        },
+        {
+            id: 4,
+            source: "Small Business Association",
+            isKeyStakeholder: false,
+            sentiment: "negative",
+            clause: "Section 4(1)(a): Reporting Timeline",
+            text: "The 30-day reporting requirement is impractical for small businesses with limited resources. We recommend extending the timeline to 60 days to allow for proper compilation and verification of required information.",
+            type: "actionable",
+            campaign: true,
+            similarCount: 84,
+            date: "2023-02-10",
+            analysis: {
+                sentimentScore: -0.6,
+                keyPhrases: ["impractical for small businesses", "extending the timeline", "proper compilation"],
+                suggestedAction: "Consider extended timeline for small businesses",
+                impact: "Medium",
+                relevance: "Relevant"
+            }
+        },
+        {
+            id: 5,
+            source: "Environmental Action Group",
+            isKeyStakeholder: true,
+            sentiment: "positive",
+            clause: "Clause 7: Corporate Social Responsibility (CSR) Reporting Requirements",
+            text: "We applaud the enhanced CSR reporting requirements. This will ensure companies are more accountable for their social and environmental commitments. However, we suggest including specific metrics for environmental impact assessment.",
+            type: "actionable",
+            campaign: false,
+            date: "2023-02-22",
+            analysis: {
+                sentimentScore: 0.7,
+                keyPhrases: ["enhanced CSR reporting", "environmental impact assessment", "specific metrics"],
+                suggestedAction: "Include environmental impact assessment metrics in reporting requirements",
+                impact: "Medium",
+                relevance: "Relevant"
+            }
+        },
+        {
+            id: 6,
+            source: "National Corporate Lawyers Association",
+            isKeyStakeholder: true,
+            sentiment: "neutral",
+            clause: "Rule 12: Enhanced Audit Requirements",
+            text: "The proposed audit requirements align with international standards but may require additional clarification on the scope of auditor liabilities. We suggest publishing detailed guidelines for implementation.",
+            type: "query",
+            campaign: false,
+            date: "2023-02-05",
+            analysis: {
+                sentimentScore: 0.1,
+                keyPhrases: ["international standards", "auditor liabilities", "detailed guidelines"],
+                suggestedAction: "Provide clarification on auditor liabilities and publish implementation guidelines",
+                impact: "Medium",
+                relevance: "Relevant"
+            }
+        }
+    ];
+
+    // Chart data
+    const chartData = {
+        labels: ['Clause 7 - CSR', 'Rule 12 - Audit', 'Section 4 - Reporting', 'Clause 9 - Compliance', 'Section 12 - Penalties'],
+        datasets: [
+            { label: 'Positive', data: [65, 30, 45, 25, 20], backgroundColor: '#34a853' },
+            { label: 'Neutral', data: [20, 35, 25, 30, 25], backgroundColor: '#fbbc04' },
+            { label: 'Negative', data: [15, 35, 30, 45, 55], backgroundColor: '#ea4335' }
+        ]
+    };
+
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', function() {
+        // Chart
+        const ctx = document.getElementById('sentimentChart').getContext('2d');
+        const lineCtx = document.getElementById('lineChart').getContext('2d');
+        new Chart(lineCtx, {
+            type: 'line',
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                },
+                scales: {
+                    y: {
+                        max: 100,
+                        ticks: { callback: v => v + '%' }
+                    }
+                }
+            }
+        });
+        new Chart(ctx, {
+            type: 'bar',
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { stacked: true },
+                    y: {
+                        stacked: true,
+                        max: 100,
+                        ticks: { callback: v => v + '%' }
+                    }
+                }
+            }
+        });
+
+        renderComments(sampleComments);
+
+        // Buttons
+        document.getElementById('exportBtn').addEventListener('click', () => alert('Data exported successfully!'));
+        document.getElementById('filterStakeholdersBtn').addEventListener('click', function() {
+            const filtered = sampleComments.filter(c => c.isKeyStakeholder);
+            renderComments(this.classList.toggle('active') ? filtered : sampleComments);
+        });
+        document.getElementById('showActionableBtn').addEventListener('click', function() {
+            const filtered = sampleComments.filter(c => c.type === 'actionable');
+            renderComments(filtered);
+            alert('Showing ' + filtered.length + ' actionable suggestions');
+        });
+
+        document.getElementById('generateAnalysisBtn').addEventListener('click', function() {
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+            setTimeout(() => {
+                this.innerHTML = '<i class="fas fa-robot"></i> Generate AI Analysis';
+                document.getElementById('aiSummaryText').textContent = "AI analysis complete! The data shows strong support for transparency measures but significant concerns about implementation timelines.";
+                document.getElementById('aiRecommendationsText').textContent = "Recommend creating tiered compliance requirements based on company revenue. Consider extending timelines for smaller organizations.";
+            }, 2000);
+        });
+
+        // Globe language selector
+        document.getElementById('languageSelector').addEventListener('click', () => {
+            document.getElementById('languageModal').style.display = 'flex';
+        });
+        document.querySelectorAll('.language-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const lang = this.getAttribute('data-lang');
+                translateWholePage(lang);
+                document.getElementById('languageModal').style.display = 'none';
+            });
+        });
+
+        document.querySelectorAll('.close-modal').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.getElementById(this.getAttribute('data-modal')).style.display = 'none';
+            });
+        });
+        window.addEventListener('click', e => { if (e.target.classList.contains('modal')) e.target.style.display = 'none'; });
+        document.getElementById('menuToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+    });
+
+    // Render comments
+    function renderComments(comments) {
+        const list = document.getElementById('commentsList');
+        list.innerHTML = '';
+        if (!comments.length) {
+            list.innerHTML = '<p class="no-results">No comments match your filters.</p>';
+            document.getElementById('pagination').innerHTML = '';
+            return;
+        }
+        comments.forEach(comment => {
+            const div = document.createElement('div');
+            div.className = 'comment';
+            const sentimentClass = comment.sentiment === 'positive' ? 'sentiment-positive' :
+                                   comment.sentiment === 'negative' ? 'sentiment-negative' : 'sentiment-neutral';
+            let typeClass = 'type-actionable', typeText = 'Query';
+            if (comment.type === 'actionable') { typeClass = 'type-actionable'; typeText = 'Actionable Suggestion'; }
+            else if (comment.type === 'complaint') { typeClass = 'type-complaint'; typeText = 'Complaint'; }
+            else if (comment.type === 'praise') { typeClass = 'type-complaint'; typeText = 'Praise'; }
+
+            div.innerHTML = `
+                <div class="comment-header">
+                    <div class="comment-source">
+                        <i class="${comment.source.includes('Individual') ? 'fas fa-user' : 'fas fa-building'}"></i>
+                        ${comment.source} ${comment.isKeyStakeholder ? '<span class="key-stakeholder">Key Stakeholder</span>' : ''}
+                    </div>
+                    <div class="comment-sentiment ${sentimentClass}">${comment.sentiment}</div>
+                </div>
+                <div class="comment-clause"><strong>${comment.clause.split(':')[0]}:</strong> ${comment.clause.split(':')[1]}</div>
+                <div class="comment-text">"${comment.text}"</div>
+                <div class="translation-ui">
+                    <button class="translation-btn" data-id="${comment.id}" data-lang="hi"><i class="fas fa-language"></i> Translate to Hindi</button>
+                    <button class="translation-btn" data-id="${comment.id}" data-lang="mr"><i class="fas fa-language"></i> Translate to Marathi</button>
+                </div>
+                <div class="comment-footer">
+                    <div class="comment-type"><span class="type-badge ${typeClass}">${typeText}</span></div>
+                    <div class="comment-actions">
+                        <button class="action-btn view-analysis" data-id="${comment.id}"><i class="far fa-eye"></i> View Analysis</button>
+                        <button class="action-btn"><i class="far fa-flag"></i> Flag</button>
+                    </div>
+                </div>
+            `;
+            list.appendChild(div);
+        });
+        document.querySelectorAll('.translation-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                translateComment(this.getAttribute('data-id'), this.getAttribute('data-lang'), this);
+            });
+        });
+        document.querySelectorAll('.view-analysis').forEach(btn => {
+            btn.addEventListener('click', function() {
+                showAnalysisModal(this.getAttribute('data-id'));
+            });
+        });
+        updatePagination();
+    }
+
+    // Show analysis modal
+    function showAnalysisModal(commentId) {
+        const comment = sampleComments.find(c => c.id == commentId);
+        if (!comment) return;
+        const modal = document.getElementById('analysisModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalContent = document.getElementById('modalContent');
+        modalTitle.textContent = `Analysis: ${comment.source}`;
+        modalContent.innerHTML = `
+            <div class="comment-clause"><strong>${comment.clause}</strong></div>
+            <div class="comment-text">"${comment.text}"</div>
+            <h4>AI Analysis</h4>
+            <div style="display: flex; align-items: center; margin: 15px 0;">
+                <div style="font-size: 24px; margin-right: 10px;">
+                    <i class="far fa-${comment.sentiment === 'positive' ? 'smile' : comment.sentiment === 'negative' ? 'frown' : 'meh'}"></i>
+                </div>
+                <div><strong>Sentiment Score:</strong> ${comment.analysis.sentimentScore.toFixed(2)}</div>
+            </div>
+            <div class="analysis-tags">${comment.analysis.keyPhrases.map(p => `<span class="analysis-tag">${p}</span>`).join('')}</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0;">
+                <div><strong>Suggested Action:</strong><p>${comment.analysis.suggestedAction}</p></div>
+                <div><strong>Impact Level:</strong><p>${comment.analysis.impact}</p></div>
+                <div><strong>Relevance:</strong><p>${comment.analysis.relevance}</p></div>
+                <div><strong>Submission Date:</strong><p>${comment.date}</p></div>
+            </div>
+        `;
+        modal.style.display = 'flex';
+    }
+
+    // Translate comment text
+    function translateComment(commentId, lang, btn) {
+        const comment = sampleComments.find(c => c.id == commentId);
+        if (!comment) return;
+        const original = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Translating...';
+        fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(comment.text)}&langpair=en|${lang}`)
+            .then(r => r.json())
+            .then(d => {
+                const translated = d.responseData.translatedText;
+                btn.closest('.comment').querySelector('.comment-text').innerHTML = `"${translated}"`;
+                btn.innerHTML = original;
+            })
+            .catch(() => { alert("Translation failed."); btn.innerHTML = original; });
+    }
+
+    // 🌍 Translate whole dashboard
+    function translateWholePage(lang) {
+        if (lang === 'en') {
+            location.reload(); // reload resets everything back to English
+            return;
+        }
+        document.querySelectorAll('body *:not(script):not(style)').forEach(el => {
+            if (el.childNodes.length === 1 && el.childNodes[0].nodeType === 3) {
+                const originalText = el.textContent.trim();
+                if (originalText) {
+                    fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(originalText)}&langpair=en|${lang}`)
+                        .then(res => res.json())
+                        .then(data => { el.textContent = data.responseData.translatedText; });
+                }
+            }
+        });
+        document.querySelector('.language-selector span').textContent =
+            lang === 'hi' ? 'Hindi' : 'Marathi';
+    }
+
+    // Pagination
+    function updatePagination() {
+        const pagination = document.getElementById('pagination');
+        pagination.innerHTML = '';
+        for (let i = 1; i <= 5; i++) {
+            const btn = document.createElement('button');
+            btn.className = i === 1 ? 'page-btn active' : 'page-btn';
+            btn.textContent = i;
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.page-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+            pagination.appendChild(btn);
+        }
+    }
+</script>
+
+
+
+</body>
+</html>
