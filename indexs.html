@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PDF Sentiment Analysis</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .upload-box {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    input[type=file] {
+      padding: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    table {
+      width: 90%;
+      margin: auto;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background: #007bff;
+      color: #fff;
+    }
+    tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>PDF Sentiment Analysis Dashboard</h1>
+
+  <div class="upload-box">
+    <form method="POST" enctype="multipart/form-data">
+      <input type="file" name="pdfs" multiple required>
+      <button type="submit">Upload & Analyze</button>
+    </form>
+  </div>
+
+  {% if results %}
+  <table>
+    <thead>
+      <tr>
+        <th>Filename</th>
+        <th>Sentiment</th>
+        <th>Summary</th>
+        <th>State</th>
+        <th>Country</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for result in results %}
+      <tr>
+        <td>{{ result.filename }}</td>
+        <td>{{ result.sentiment }}</td>
+        <td>{{ result.summary }}</td>
+        <td>{{ result.state }}</td>
+        <td>{{ result.country }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+
+</body>
+</html>
